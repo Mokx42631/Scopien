@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scopien OS — Feature Showcase</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --border: #1e1e2e;
+    --text: #e4e4ef;
+    --muted: #8888a0;
+    --accent: #6c5ce7;
+    --accent2: #00cec9;
+    --accent3: #fd79a8;
+    --gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+  
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+  
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .slide.active {
+    display: flex;
+    opacity: 1;
+  }
+  
+  /* Title Slide */
+  .slide-title h1 {
+    font-size: 72px;
+    font-weight: 900;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    letter-spacing: -2px;
+  }
+  
+  .slide-title .tagline {
+    font-size: 28px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+  
+  .slide-title .badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 14px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  /* Section headers */
+  .section-num {
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  
+  h2 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 40px;
+    line-height: 1.1;
+  }
+  
+  h2 span {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Grid layouts */
+  .grid {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  
+  .card .icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  
+  .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  
+  /* Feature list */
+  .feature-list {
+    list-style: none;
+    max-width: 900px;
+    width: 100%;
+  }
+  
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 18px;
+  }
+  
+  .feature-list li .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+  
+  .feature-list li strong {
+    color: var(--text);
+  }
+  
+  .feature-list li span {
+    color: var(--muted);
+  }
+  
+  /* Use case cards */
+  .usecase {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+  }
+  
+  .usecase .label {
+    font-size: 12px;
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  
+  .usecase h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .usecase p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  
+  /* Architecture diagram */
+  .arch-box {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 1000px;
+    width: 100%;
+  }
+  
+  .arch-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .arch-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .arch-center {
+    background: var(--gradient);
+    color: #fff;
+    font-weight: 800;
+    font-size: 20px;
+    padding: 40px 30px;
+    border-radius: 16px;
+    text-align: center;
+    flex-shrink: 0;
+    width: 180px;
+  }
+  
+  .arch-arrow {
+    color: var(--accent2);
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    right: 40px;
+    display: flex;
+    gap: 12px;
+    z-index: 100;
+  }
+  
+  .nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  
+  .nav button:hover { background: var(--accent); }
+  
+  .counter {
+    position: fixed;
+    bottom: 36px;
+    left: 40px;
+    font-size: 14px;
+    color: var(--muted);
+    z-index: 100;
+  }
+  
+  .pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .pill-purple { background: #6c5ce720; color: #6c5ce7; }
+  .pill-teal { background: #00cec920; color: #00cec9; }
+  .pill-pink { background: #fd79a820; color: #fd79a8; }
+  .pill-blue { background: #0984e320; color: #74b9ff; }
+  
+  .subtitle {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 700px;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  
+  .left-align {
+    align-items: flex-start;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide slide-title active" data-slide="0">
+    <div class="badge">Open Source · Self-Hosted · MIT Licensed</div>
+    <br><br>
+    <h1>Scopien OS</h1>
+    <div class="tagline">The universal gateway for AI agents</div>
+    <p style="color: var(--muted); font-size: 16px;">One process. Every chat app. Your hardware, your rules.</p>
+  </div>
+
+  <!-- SLIDE 2: What is Scopien -->
+  <div class="slide" data-slide="1">
+    <div class="section-num">01 — Overview</div>
+    <h2>What is <span>Scopien?</span></h2>
+    <p class="subtitle">A self-hosted gateway that connects your chat apps to AI agents. Run one process, talk to your AI from WhatsApp, Telegram, Discord, iMessage — simultaneously.</p>
+    <div class="arch-box">
+      <div class="arch-col">
+        <div class="arch-node">📱 WhatsApp</div>
+        <div class="arch-node">✈️ Telegram</div>
+        <div class="arch-node">🎮 Discord</div>
+        <div class="arch-node">💬 iMessage</div>
+        <div class="arch-node">🔌 Slack / Teams / +15</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-center">⚡ Scopien<br>Gateway</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-col">
+        <div class="arch-node">🤖 AI Agents</div>
+        <div class="arch-node">🧠 Memory</div>
+        <div class="arch-node">🛠️ Tools & Skills</div>
+        <div class="arch-node">🌐 600+ SaaS Apps</div>
+        <div class="arch-node">📱 Mobile Nodes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Channels -->
+  <div class="slide left-align" data-slide="2">
+    <div class="section-num">02 — Messaging Channels</div>
+    <h2>Talk from <span>anywhere</span></h2>
+    <div class="grid grid-4">
+      <div class="card"><div class="icon">📱</div><h3>WhatsApp</h3><p>Via Baileys (WhatsApp Web). DMs + group chats with mention activation.</p></div>
+      <div class="card"><div class="icon">✈️</div><h3>Telegram</h3><p>Bot API via grammY. Inline buttons, voice notes, rich media.</p></div>
+      <div class="card"><div class="icon">🎮</div><h3>Discord</h3><p>Full bot with slash commands, threads, reactions, and channels.</p></div>
+      <div class="card"><div class="icon">💬</div><h3>iMessage</h3><p>Native macOS integration via imsg CLI.</p></div>
+      <div class="card"><div class="icon">💼</div><h3>Slack</h3><p>Workspace bot with channel and DM support.</p></div>
+      <div class="card"><div class="icon">👥</div><h3>MS Teams</h3><p>Enterprise messaging integration.</p></div>
+      <div class="card"><div class="icon">📧</div><h3>Google Chat</h3><p>Workspace chat integration.</p></div>
+      <div class="card"><div class="icon">🔌</div><h3>+15 More</h3><p>Signal, Matrix, Mattermost, Nostr, LINE, Zalo, Feishu, Twitch, etc.</p></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Core Features -->
+  <div class="slide left-align" data-slide="3">
+    <div class="section-num">03 — Core Platform Features</div>
+    <h2>Everything <span>built in</span></h2>
+    <div class="grid grid-3">
+      <div class="card"><div class="icon">🧠</div><h3>Persistent Memory</h3><p>Daily logs + long-term memory in plain Markdown. Survives across sessions. Auto memory flush before compaction.</p></div>
+      <div class="card"><div class="icon">🤖</div><h3>Multi-Agent Routing</h3><p>Run multiple isolated agents in one gateway. Each with its own workspace, sessions, skills, and persona.</p></div>
+      <div class="card"><div class="icon">🔧</div><h3>Tool Use & Skills</h3><p>Extensible skill system. Install from ScopieHub or build your own. Shell exec, browser control, file I/O.</p></div>
+      <div class="card"><div class="icon">🌐</div><h3>Browser Automation</h3><p>Full Chromium browser control. Navigate, click, type, screenshot. Chrome extension relay for existing tabs.</p></div>
+      <div class="card"><div class="icon">📱</div><h3>Mobile Nodes</h3><p>Pair iOS & Android devices. Camera, location, screen, Canvas UI surface. Voice wake word.</p></div>
+      <div class="card"><div class="icon">⏰</div><h3>Cron & Automation</h3><p>Scheduled jobs, heartbeats, webhooks, and hooks. Run tasks on timers or triggers autonomously.</p></div>
+      <div class="card"><div class="icon">🔗</div><h3>600+ SaaS Integrations</h3><p>Connect Gmail, Slack, HubSpot, Notion, Stripe, GitHub, Salesforce — via OAuth. No API keys to manage.</p></div>
+      <div class="card"><div class="icon">🎙️</div><h3>Voice & TTS</h3><p>Voice note transcription, text-to-speech output, voice calls via Vapi bridge.</p></div>
+      <div class="card"><div class="icon">🔒</div><h3>Security & Sandboxing</h3><p>Allowlists, token auth, sandboxed execution, tool policies, elevated permissions with approval flows.</p></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Agent Architecture -->
+  <div class="slide" data-slide="4">
+    <div class="section-num">04 — Agent Architecture</div>
+    <h2>One gateway, <span>many agents</span></h2>
+    <div class="grid grid-2" style="max-width: 1000px;">
+      <div class="card">
+        <h3>🧩 Isolated Workspaces</h3>
+        <p>Each agent has its own workspace, persona (SOUL.md, IDENTITY.md), memory, sessions, and skill set. No cross-contamination.</p>
+      </div>
+      <div class="card">
+        <h3>🔀 Smart Routing</h3>
+        <p>Bind channels to agents. Route by sender, group, or channel account. Per-sender sessions or shared main session.</p>
+      </div>
+      <div class="card">
+        <h3>👶 Sub-Agents</h3>
+        <p>Spawn background sub-agents for long tasks. They run in isolated sessions and report back when done. Parallel execution.</p>
+      </div>
+      <div class="card">
+        <h3>🔄 Session Management</h3>
+        <p>Auto-compaction, session pruning, streaming, typing indicators. Sessions persist across restarts.</p>
+      </div>
+      <div class="card">
+        <h3>🧭 Model Flexibility</h3>
+        <p>Anthropic, OpenAI, Ollama, Bedrock, OpenRouter, Qwen, Deepseek, and more. Swap models per agent or per session.</p></div>
+      <div class="card">
+        <h3>🛡️ Approval Flows</h3>
+        <p>Elevated commands require user approval. Tool policies control what each agent can access. Safety by design.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Deployment -->
+  <div class="slide left-align" data-slide="5">
+    <div class="section-num">05 — Runs Everywhere</div>
+    <h2>Deploy <span>your way</span></h2>
+    <div class="grid grid-3">
+      <div class="card"><div class="icon">🍎</div><h3>macOS</h3><p>Native menu bar app with Canvas, voice overlay, and webchat. Bundled gateway.</p></div>
+      <div class="card"><div class="icon">🐧</div><h3>Linux</h3><p>npm install, Docker, Nix, Ansible. Runs on any distro, VPS, or Raspberry Pi.</p></div>
+      <div class="card"><div class="icon">🪟</div><h3>Windows</h3><p>WSL2 or native Node.js. Full feature parity.</p></div>
+      <div class="card"><div class="icon">🐳</div><h3>Docker</h3><p>One-command container deployment. Perfect for servers and CI.</p></div>
+      <div class="card"><div class="icon">☁️</div><h3>Cloud</h3><p>Fly.io, GCP, Hetzner, DigitalOcean, Oracle Cloud — all documented.</p></div>
+      <div class="card"><div class="icon">🥧</div><h3>Raspberry Pi</h3><p>Runs on a Pi. Your AI assistant on a $35 board.</p></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Use Cases -->
+  <div class="slide left-align" data-slide="6">
+    <div class="section-num">06 — Use Cases</div>
+    <h2>What people <span>build</span></h2>
+    <div class="grid grid-2">
+      <div class="usecase">
+        <div class="label">💼 Sales & Outreach</div>
+        <h3>Automated Prospecting Cadences</h3>
+        <p>Multi-touch outreach via email and LinkedIn. Lead discovery, knowledge base enrichment, personalized messaging. CRM integration with pipeline tracking.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🏠 Smart Home</div>
+        <h3>Home Automation Hub</h3>
+        <p>Control Home Assistant, Roborock vacuums, air purifiers, and IoT devices via natural language from any chat app. "Turn off the lights" from WhatsApp.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">👨‍💻 Development</div>
+        <h3>Code from Your Couch</h3>
+        <p>Build and deploy apps entirely via Telegram. PR reviews, Jira integration, CI/CD pipelines. One user rebuilt their entire website while watching Netflix.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🛒 E-Commerce</div>
+        <h3>Shopping Autopilot</h3>
+        <p>Automated grocery ordering (Tesco), meal planning, delivery booking — all via browser automation. No APIs needed, just browser control.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: More Use Cases -->
+  <div class="slide left-align" data-slide="7">
+    <div class="section-num">06 — Use Cases (cont.)</div>
+    <h2>More <span>possibilities</span></h2>
+    <div class="grid grid-2">
+      <div class="usecase">
+        <div class="label">📊 Finance</div>
+        <h3>TradingView Analysis</h3>
+        <p>Log into TradingView via browser, screenshot charts, perform technical analysis on demand. Accounting intake from email PDFs. Stripe charge management.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🏢 Salesforce</div>
+        <h3>Full Salesforce Operations</h3>
+        <p>SOQL queries, CRUD, metadata deployment, Apex development, admin tasks, org documentation — all via chat. Specialized sub-agents for every SF domain.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🏥 Health & Wellness</div>
+        <h3>Personal Health Assistant</h3>
+        <p>Oura Ring integration with calendar sync. Track sleep, activity, and recovery. Gym scheduling. Morning health briefings.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">📚 Learning & Knowledge</div>
+        <h3>Language Learning & Memory Vaults</h3>
+        <p>Chinese pronunciation coaching. WhatsApp export ingestion with voice note transcription. Semantic search across bookmarks. Evolving knowledge bases.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: More Use Cases -->
+  <div class="slide left-align" data-slide="8">
+    <div class="section-num">06 — Use Cases (cont.)</div>
+    <h2>Even <span>more</span></h2>
+    <div class="grid grid-3">
+      <div class="usecase">
+        <div class="label">🗓️ Scheduling</div>
+        <h3>Booking Agent</h3>
+        <p>Padel court booking, school meal scheduling (ParentPay), calendar management — automated and on schedule.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🎨 Creative</div>
+        <h3>Visual Briefings</h3>
+        <p>Daily AI-generated scene images with weather, tasks, and quotes. Batch image generation. Screenshot-to-Markdown.</p>
+      </div>
+      <div class="usecase">
+        <div class="label">🤝 Support</div>
+        <h3>Slack Auto-Support</h3>
+        <p>Monitor Slack channels, respond to questions, forward to Telegram. One agent autonomously fixed a production bug.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Integrations -->
+  <div class="slide" data-slide="9">
+    <div class="section-num">07 — Integrations</div>
+    <h2><span>600+</span> connected apps</h2>
+    <p class="subtitle">OAuth-based connections to the tools you already use. No API keys to juggle.</p>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 800px;">
+      <span class="pill pill-purple">Gmail</span>
+      <span class="pill pill-teal">Google Calendar</span>
+      <span class="pill pill-pink">Slack</span>
+      <span class="pill pill-blue">HubSpot</span>
+      <span class="pill pill-purple">Notion</span>
+      <span class="pill pill-teal">Stripe</span>
+      <span class="pill pill-pink">GitHub</span>
+      <span class="pill pill-blue">Linear</span>
+      <span class="pill pill-purple">Airtable</span>
+      <span class="pill pill-teal">Salesforce</span>
+      <span class="pill pill-pink">Jira</span>
+      <span class="pill pill-blue">Todoist</span>
+      <span class="pill pill-purple">Shopify</span>
+      <span class="pill pill-teal">Twilio</span>
+      <span class="pill pill-pink">Zendesk</span>
+      <span class="pill pill-blue">Intercom</span>
+      <span class="pill pill-purple">Mailchimp</span>
+      <span class="pill pill-teal">Calendly</span>
+      <span class="pill pill-pink">Asana</span>
+      <span class="pill pill-blue">Monday.com</span>
+      <span class="pill pill-purple">Freshdesk</span>
+      <span class="pill pill-teal">QuickBooks</span>
+      <span class="pill pill-pink">Discord</span>
+      <span class="pill pill-blue">Dropbox</span>
+      <span class="pill pill-purple">LinkedIn</span>
+      <span class="pill pill-teal">Google Sheets</span>
+      <span class="pill pill-pink">Trello</span>
+      <span class="pill pill-blue">+ 570 more</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Why Scopien -->
+  <div class="slide" data-slide="10">
+    <div class="section-num">08 — Why Scopien</div>
+    <h2>Why choose <span>Scopien?</span></h2>
+    <div class="grid grid-3" style="max-width: 1100px;">
+      <div class="card" style="border-color: var(--accent);">
+        <div class="icon">🏠</div>
+        <h3>Self-Hosted</h3>
+        <p>Your data never leaves your hardware. No vendor lock-in. Full control.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent2);">
+        <div class="icon">🔓</div>
+        <h3>Open Source</h3>
+        <p>MIT licensed. Community-driven. Fork it, extend it, own it.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent3);">
+        <div class="icon">🧩</div>
+        <h3>Extensible</h3>
+        <p>Skills, plugins, MCP servers, webhooks. Build exactly what you need.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <div class="icon">⚡</div>
+        <h3>One Process</h3>
+        <p>Single gateway serves all channels, all agents, all sessions. 5-minute setup.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent2);">
+        <div class="icon">🧠</div>
+        <h3>Agent-Native</h3>
+        <p>Built for agents, not chatbots. Tool use, memory, sub-agents, sessions.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent3);">
+        <div class="icon">🌍</div>
+        <h3>Universal</h3>
+        <p>Any OS, any model provider, any chat app. One assistant everywhere.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Get a Demo -->
+  <div class="slide" data-slide="11">
+    <div class="section-num">09 — Get Started</div>
+    <h2>Ready to see it <span>in action?</span></h2>
+    <p class="subtitle">We'd love to walk you through a personalized demo and show you how Scopien can transform your workflows.</p>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 50px 60px; max-width: 600px; width: 100%; text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 20px;">📬</div>
+      <h3 style="font-size: 24px; margin-bottom: 12px;">Reach out for a demo</h3>
+      <a href="mailto:max.shaw@dtcforce.com" style="font-size: 22px; color: var(--accent2); text-decoration: none; font-weight: 600;">max.shaw@dtcforce.com</a>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">Drop us an email and we'll set up a live walkthrough<br>tailored to your use case.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="counter"><span id="current">1</span> / <span id="total">12</span></div>
+<div class="nav">
+  <button onclick="navigate(-1)">←</button>
+  <button onclick="navigate(1)">→</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('total').textContent = total;
+
+  function show(idx) {
+    slides.forEach(s => s.classList.remove('active'));
+    slides[idx].classList.add('active');
+    document.getElementById('current').textContent = idx + 1;
+  }
+
+  function navigate(dir) {
+    current = (current + dir + total) % total;
+    show(current);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+</script>
+
+</body>
+</html>
